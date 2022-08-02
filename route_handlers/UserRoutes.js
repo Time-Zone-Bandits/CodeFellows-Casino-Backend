@@ -5,7 +5,7 @@ const TransactionModel = require('../models/Transaction')
 class UserRoutes {
 
     static async getUser(request, response){
-        
+        response.send(`Hello ${request.user.name}`);
     }
 
     static postUser(request, response){
