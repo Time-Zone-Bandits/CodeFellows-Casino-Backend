@@ -6,18 +6,22 @@ class UserRoutes {
 
     static async getUser(request, response){
         response.send(`Hello ${request.user.name}`);
+        console.log(response.getHeaders());
     }
 
     static postUser(request, response){
-        
+        response.send(`Hello ${request.user.name}`);
+        console.log(response.getHeaders());
     }
 
     static deleteUser(request, response){
-      
+        response.send(`Hello ${request.user.name}`);
+        console.log(response.getHeaders());
     }
 
     static updateUser(request, response){
-       
+        response.send(`Hello ${request.user.name}`);
+        console.log(response.getHeaders());
     }
 }
 
