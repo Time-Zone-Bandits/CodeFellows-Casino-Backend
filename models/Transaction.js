@@ -7,6 +7,6 @@ const transactionSchema = new Schema({
     game: {type: String, required: true}
   });
 
-const Transaction = mongoose.model('Transaction', bookSchema);
+const Transaction = mongoose.model('Transaction', transactionSchema);
 
 module.exports = Transaction;

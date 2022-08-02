@@ -9,13 +9,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(verifyUser);
+////
 
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_URL);
 
 /*********************************ROUTES*****************************************/
 const userHandler = require('./route_handlers/UserRoutes');
-app.user('/user', userHandler);
+app.use('/user', userHandler);
 
 const blackJackHandler = require('./route_handlers/BlackJackRoutes');
 app.use('/blackjack', blackJackHandler);
