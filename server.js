@@ -10,13 +10,17 @@ app.use(cors());
 app.use(express.json());
 app.use(verifyUser);
 
-
 const mongoose = require('mongoose');
 mongoose.connect(process.env.DATABASE_URL);
 
-app.get('/test', (req, res) => {
-    res.send(req.user);
-})
+/*********************************ROUTES*****************************************/
+const userHandler = require('./route_handlers/UserRoutes');
+app.use('/user', userHandler);
+
+const blackJackHandler = require('./route_handlers/BlackJackRoutes');
+app.use('/blackjack', blackJackHandler);
+
+/*******************************END ROUTES***************************************/
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`listening on ${PORT}`));
