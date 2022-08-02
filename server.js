@@ -6,7 +6,7 @@ const express = require('express');
 const app = express();
 
 //middleware
-app.use(cors());
+app.use(cors({'Access-Control-Allow-Origin': process.env.AUTHORIZED_URL}));
 app.use(express.json());
 app.use(verifyUser);
 ////
