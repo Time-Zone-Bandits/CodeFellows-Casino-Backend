@@ -9,7 +9,8 @@ class Payments{
         let user = await UserModel.findOne({email: userEmail});
         user.chips += winnings;
         user.save()
-        TransactionModel.create({email: userEmail, winnings: winnings, game: gameName, date: new Date()}); 
+        TransactionModel.create({email: userEmail, winnings: winnings, game: gameName, date: new Date()});
+        return user.chips; 
     }
 
     //returns how many chips the user has
