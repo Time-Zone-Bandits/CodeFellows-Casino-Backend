@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const UserModel = require('../models/User');
-const TransactionModel = require('../models/Transaction')
 
 class UserRoutes {
 
