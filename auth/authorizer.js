@@ -3,7 +3,6 @@ const jwksClient = require('jwks-rsa');
 
 function verifyUser(request, response, next) {
     try {
-        console.log(request.headers);
         //front-end gets this from withAuth0 props and adds it to header
         const token = request.headers.authorization.split(' ')[1]; // gets the part after 'Bearer'
         jsonwebtoken.verify(token, getKey, {}, (error, user) => {

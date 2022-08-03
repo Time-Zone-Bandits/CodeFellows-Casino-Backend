@@ -1,33 +1,54 @@
 const router = require('express').Router();
 const UserModel = require('../models/User');
-const TransactionModel = require('../models/Transaction')
 
 class UserRoutes {
 
     static async getUser(request, response){
-        response.send(`Hello ${request.user.name}`);
-        console.log(response.getHeaders());
+        const user = await UserModel.findOne({email: request.user.email})
+        response.send(user)
     }
 
-    static postUser(request, response){
-        response.send(`Hello ${request.user.name}`);
-        console.log(response.getHeaders());
+    static async postUser(request, response){
+        const user = {
+            name: request.user.name,
+            email: request.user.email,
+            chips: 1000
+        };
+        UserModel.create(user, (error, user) => {
+            !(error) ? response.send(user) : response.status(400).send(error.message);
+        });
     }
 
-    static deleteUser(request, response){
-        response.send(`Hello ${request.user.name}`);
-        console.log(response.getHeaders());
+    static async deleteUser(request, response){
+        const emailToDelete = request.params.email;
+        UserModel.deleteOne({email: emailToDelete}, (error, deleteStatus) => {
+            !(error) ? response.send(deleteStatus) : response.status(400).send(error.message);
+        })
     }
 
-    static updateUser(request, response){
-        response.send(`Hello ${request.user.name}`);
-        console.log(response.getHeaders());
+    static async updateUser(request, response){
+        let user = await UserModel.find({email: request.user.email})
+        if (user.length === 0){
+            console.log('adding user');
+            user = {
+                name: request.user.name,
+                email: request.user.email,
+                chips: 1000
+            }
+            UserModel.create(user, (error, user) => {
+                !(error) ? response.send(user) : response.status(400).send(error.message);
+            })
+        } else {
+            UserModel.findOneAndUpdate({email: request.user.email}, request.body, {new: true}, (error, result) => {
+                !(error) ? response.send(result) : response.status(400).send(error.message);
+            });
+        }
     }
 }
 
 router.get('/', UserRoutes.getUser);
 router.post('/', UserRoutes.postUser);
-router.delete('/:id', UserRoutes.deleteUser);
-router.put('/:id', UserRoutes.updateUser);
+router.delete('/:email', UserRoutes.deleteUser);
+router.put('/', UserRoutes.updateUser);
 
 module.exports = router;
