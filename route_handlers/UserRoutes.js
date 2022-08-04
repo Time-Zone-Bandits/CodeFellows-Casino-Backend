@@ -1,11 +1,14 @@
 const router = require('express').Router();
 const UserModel = require('../models/User');
+const TransactionModel = require('../models/Transaction')
 
 class UserRoutes {
 
     static async getUser(request, response){
         const user = await UserModel.findOne({email: request.user.email})
-        response.send(user)
+        const transactions = await TransactionModel.find({email: request.user.email});
+
+        response.send({user: user, transactions: transactions});
     }
 
     static async postUser(request, response){
@@ -29,7 +32,6 @@ class UserRoutes {
     static async updateUser(request, response){
         let user = await UserModel.find({email: request.user.email})
         if (user.length === 0){
-            console.log('adding user');
             user = {
                 name: request.user.name,
                 email: request.user.email,
