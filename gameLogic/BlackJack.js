@@ -12,6 +12,7 @@ class Blackjack{
         this.playersCards = [];
         this.dealersCards = [];
         this.bet = 0;
+        this.winCondition = 'no winner';
     }
 
     fetchDeck = async (deckCount) => {
@@ -88,59 +89,95 @@ class Blackjack{
         const playerScore = this.scoreHand(this.playersCards);
         const dealersScore = this.scoreHand(this.dealersCards);
         if (playerScore === 21 && dealersScore === 21){
-            return 'tie';
+            this.winCondition = 'tie';
         } else if (dealersScore === 21){
-            return 'dealer won';
+            this.winCondition = 'dealer won';
         } else if (playerScore === 21){
-            return 'player won';
+            this.winCondition = 'player won';
         } else {
-            return 'no winner';
+            this.winCondition = 'no winner';
         }
+        return this.winCondition;
     }
 
     playRound = async (hitOrStand) => {
+        if (this.winCondition !== 'no winner'){
+            return this.winCondition;
+        }
         if (hitOrStand === 'hit'){
             await this.addCard('player');
             //if player busts, return 'dealer won'
             let playerScore = this.scoreHand(this.playersCards);
             if (playerScore > 21) {
-                return 'dealer won';
+                this.winCondition = 'dealer won';
                 //if player gets 21, go to dealers turn
             } else if (playerScore === 21){
-                return this.dealersTurn();
+                this.winCondition = await this.dealersTurn();
             } else {
-                return 'no winner';
+                this.winCondition = 'no winner';
             }
         } else if (hitOrStand === 'stand'){
-            return this.dealersTurn();
+            this.winCondition = await this.dealersTurn();
         }
+        return this.winCondition;
     }
 
     dealersTurn = async() => {
-        return 'tie';
+        let playerScore = this.scoreHand(this.playersCards);
+        let dealerScore = this.scoreHand(this.dealersCards);
+        while(dealerScore < 17){
+            await this.addCard('dealer');
+            dealerScore = this.scoreHand(this.dealersCards);
+        }
+        if (dealerScore > 21){
+            this.winCondition = 'player won';
+        } else if (playerScore === dealerScore){
+            this.winCondition = 'tie';
+        } else if (dealerScore > playerScore){
+            this.winCondition = 'dealer won';
+        } else {
+            this.winCondition = 'player won';
+        }
+        return this.winCondition;
     }
 }
 
 /* async function tryBlackJack(){
     const BlackjackGame = new Blackjack(6);
     await BlackjackGame.fetchDeck(6);
-    console.log(await BlackjackGame.initialDeal());
-    console.log('PLAYER:');
-    let cards = BlackjackGame.getPlayersCards() 
-    console.log(cards);
-    console.log('SCORING:')
-    console.log(BlackjackGame.scoreHand(cards));
-    console.log('DEALER:');
-    cards = BlackjackGame.getDealersCards();
-    console.log(cards);
-    console.log('SCORING');
-    console.log(BlackjackGame.scoreHand(cards));
-    await BlackjackGame.addCard('dealer')
-    cards = BlackjackGame.getDealersCards();
-    console.log(cards);
-    console.log('SCORING');
-    console.log(BlackjackGame.scoreHand(cards))
-
+    let result = await BlackjackGame.initialDeal()
+    console.log('PLAYER HAND:');
+    console.log(BlackjackGame.getPlayersCards());
+    console.log('PLAYER SCORE:');
+    console.log(BlackjackGame.scoreHand(BlackjackGame.getPlayersCards()));
+    console.log('DEALER HAND:');
+    console.log(BlackjackGame.getDealersCards());
+    console.log('DEALER SCORE:');
+    console.log(BlackjackGame.scoreHand(BlackjackGame.getDealersCards()));
+    console.log('GAME RESULT:');
+    console.log(result);
+    ////
+    console.log('PLAY ROUND');
+    result = await BlackjackGame.playRound('hit');
+    console.log('PLAYS HAND AFTER HIT:');
+    console.log(BlackjackGame.getPlayersCards());
+    console.log('PLAYER SCORE:');
+    console.log(BlackjackGame.scoreHand(BlackjackGame.getPlayersCards()));
+    console.log('DEALER SCORE:');
+    console.log(BlackjackGame.scoreHand(BlackjackGame.getDealersCards()));
+    console.log('GAME RESULT:');
+    console.log(result);
+    ////
+    console.log('PLAY ROUND');
+    result = await BlackjackGame.playRound('stand')
+    console.log('DEALERS CARDS AFTER STAND');
+    console.log(BlackjackGame.getDealersCards());
+    console.log('PLAYER SCORE:');
+    console.log(BlackjackGame.scoreHand(BlackjackGame.getPlayersCards()));
+    console.log('DEALERS SCORE');
+    console.log(BlackjackGame.scoreHand(BlackjackGame.getDealersCards()));
+    console.log('GAME RESULT:');
+    console.log(result);
 }
 
 tryBlackJack(); */
