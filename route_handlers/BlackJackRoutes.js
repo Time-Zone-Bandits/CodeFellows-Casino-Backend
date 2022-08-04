@@ -1,6 +1,4 @@
 const router = require('express').Router();
-const UserModel = require('../models/User');
-const TransactionModel = require('../models/Transaction');
 const Payments = require('../gameLogic/Payment');
 const Blackjack = require('../gameLogic/BlackJack');
 
