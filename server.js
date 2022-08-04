@@ -24,6 +24,9 @@ app.use('/blackjack', blackJackHandler);
 const rouletteHandler = require('./route_handlers/RouletteRoutes');
 app.use('/roulette', rouletteHandler);
 
+const horseraceHandler = require('./route_handlers/HorseRaceRoutes');
+app.use('/horserace', horseraceHandler);
+
 /*******************************END ROUTES***************************************/
 
 const PORT = process.env.PORT || 3001;
