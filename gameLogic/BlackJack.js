@@ -31,10 +31,8 @@ class Blackjack{
     }
 
     initialDeal = async() => {
-        console.log('drawing cards:');
         const playersCards = await this.drawCards(2);
         const dealersCards = await this.drawCards(2);
-        console.log('adding cards');
         this.playersCards.push(...playersCards);
         this.dealersCards.push(...dealersCards);
         return this.initialWinStatus();
