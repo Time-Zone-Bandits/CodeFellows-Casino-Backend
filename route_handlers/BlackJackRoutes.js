@@ -13,7 +13,6 @@ class BlackJackRoutes {
 
     static async postBlackJack(request, response){
         try {
-            console.log(request.user.email);
             BlackJackRoutes.BlackjackGame[request.user.email] = new Blackjack();
             await BlackJackRoutes.BlackjackGame[request.user.email].fetchDeck(6);
             let winStatus = await BlackJackRoutes.BlackjackGame[request.user.email].initialDeal();
@@ -28,9 +27,9 @@ class BlackJackRoutes {
                 if (winStatus === 'player won'){
                     winnings = bet * 1.5
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
-                } else if (winStatus = 'tie'){
+                } else if (winStatus === 'tie'){
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
-                } else if (winStatus = 'dealer won'){
+                } else if (winStatus === 'dealer won'){
                     winnings = -bet
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 }
@@ -44,7 +43,6 @@ class BlackJackRoutes {
                 winnings: winnings
             });
         } catch (error) {
-            console.error(error.message)
             response.send(error.message);
         }
     }
@@ -55,32 +53,24 @@ class BlackJackRoutes {
 
     static async updateBlackJack(request, response){
         try{
-            console.log(request.user.email);
-            console.log(request.body);
             if (BlackJackRoutes.BlackjackGame[request.user.email] === null){
                 response.send('game not started');
                 return;
             }
-            console.log(request.body.choice);
             let winStatus = await BlackJackRoutes.BlackjackGame[request.user.email].playRound(request.body.choice);
-            console.log(`win status: ${winStatus}`);
             let playersCards = BlackJackRoutes.BlackjackGame[request.user.email].getPlayersCards();
             let dealersCards = BlackJackRoutes.BlackjackGame[request.user.email].getDealersCards();
             let playerScore = BlackJackRoutes.BlackjackGame[request.user.email].scoreHand(playersCards);
             let dealerScore = BlackJackRoutes.BlackjackGame[request.user.email].scoreHand(dealersCards);
             let bet = BlackJackRoutes.BlackjackGame[request.user.email].bet;
             let winnings = 0;
-            console.log(BlackJackRoutes.BlackjackGame[request.user.email]);
             if (winStatus !== 'no winner'){
                 if (winStatus === 'player won'){
-                    console.log('recording player won');
                     winnings = bet;
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 } else if (winStatus === 'tie'){
-                    console.log('recording tie');
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 } else if (winStatus === 'dealer won'){
-                    console.log('recording player lost');
                     winnings = -bet;
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 }
