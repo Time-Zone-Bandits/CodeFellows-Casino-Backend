@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const Payments = require('../gameLogic/Payment');
 const Blackjack = require('../gameLogic/BlackJack');
+const { findByIdAndDelete } = require('../models/Transaction');
 
 class BlackJackRoutes {
     static BlackjackGame = {};
@@ -21,15 +22,16 @@ class BlackJackRoutes {
             let playerScore = BlackJackRoutes.BlackjackGame[request.user.email].scoreHand(playersCards);
             let dealerScore = BlackJackRoutes.BlackjackGame[request.user.email].scoreHand(dealersCards);
             BlackJackRoutes.BlackjackGame[request.user.email].bet = request.body.bet;
+            let bet = request.body.bet;
             let winnings = 0;
             if (winStatus !== 'no winner'){
                 if (winStatus === 'player won'){
-                    winnings = BlackJackRoutes.BlackjackGame[request.user.email].bet * 1.5
+                    winnings = bet * 1.5
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 } else if (winStatus = 'tie'){
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 } else if (winStatus = 'dealer won'){
-                    winnings = -BlackJackRoutes.BlackjackGame[request.user.email].bet
+                    winnings = -bet
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 }
             }
@@ -42,7 +44,8 @@ class BlackJackRoutes {
                 winnings: winnings
             });
         } catch (error) {
-            response.send(error);
+            console.error(error.message)
+            response.send(error.message);
         }
     }
 
@@ -71,14 +74,14 @@ class BlackJackRoutes {
             if (winStatus !== 'no winner'){
                 if (winStatus === 'player won'){
                     console.log('recording player won');
-                    winnings = BlackJackRoutes.BlackjackGame[request.user.email].bet;
+                    winnings = bet;
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 } else if (winStatus === 'tie'){
                     console.log('recording tie');
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 } else if (winStatus === 'dealer won'){
                     console.log('recording player lost');
-                    winnings = -BlackJackRoutes.BlackjackGame[request.user.email].bet
+                    winnings = -bet;
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 }
                 BlackJackRoutes.BlackjackGame[request.user.email] === null;
@@ -92,7 +95,8 @@ class BlackJackRoutes {
                 winnings: winnings
             });
         } catch (error){
-            response.send(error);
+            console.error(error.message)
+            response.send(error.message);
         }
     }
 }
