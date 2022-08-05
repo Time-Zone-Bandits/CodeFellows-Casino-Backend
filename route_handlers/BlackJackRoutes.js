@@ -12,6 +12,7 @@ class BlackJackRoutes {
 
     static async postBlackJack(request, response){
         try {
+            console.log(request.user.email);
             BlackJackRoutes.BlackjackGame[request.user.email] = new Blackjack();
             await BlackJackRoutes.BlackjackGame[request.user.email].fetchDeck(6);
             let winStatus = await BlackJackRoutes.BlackjackGame[request.user.email].initialDeal();
@@ -51,6 +52,8 @@ class BlackJackRoutes {
 
     static async updateBlackJack(request, response){
         try{
+            console.log(request.user.email);
+            console.log(request.body);
             if (BlackJackRoutes.BlackjackGame[request.user.email] === null){
                 response.send('game not started');
                 return;
@@ -78,6 +81,7 @@ class BlackJackRoutes {
                     winnings = -BlackJackRoutes.BlackjackGame[request.user.email].bet
                     await Payments.closeBet(request.user.email, winnings, 'blackjack');
                 }
+                BlackJackRoutes.BlackjackGame[request.user.email] === null;
             }
             response.send({
                 winStatus: winStatus, 
